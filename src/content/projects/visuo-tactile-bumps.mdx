@@ -1,0 +1,94 @@
+---
+title: "Visuo-Tactile Bumps"
+tagline: "Choosing the silicone bump profile for a shear-sensing robotic tactile skin, by nonlinear contact FEA — a transduction-coupled design study the field didn't have."
+headlineMetric:
+  value: "98% of the shear signal at 68% of the deflection"
+  label: "the selected 'crown' profile versus the best-performing alternatives"
+role: "CAD · nonlinear contact FEA · design of experiments · mold design · silicone fabrication"
+org: "JHU Neuroengineering & Biomedical Instrumentation Lab"
+dateRange: "2026"
+tools:
+  - "SolidWorks Simulation (nonlinear, hyperelastic)"
+  - "Python"
+  - "Silicone molding"
+  - "FDM / resin printing"
+status: "Ongoing — multimodal slip-prediction validation in progress"
+heroImage: "p2/fea_crown.png"
+heroAlt: "Nonlinear FEA displacement contour of the selected crown-profile silicone bump under a shear load."
+order: 2
+tags: ["Research", "FEA", "Design study", "Fabrication"]
+featured: true
+---
+
+## The problem
+
+On a quadrant tactile sensor, the raised silicone bump is a **passive mechanical signal
+conditioner**: it maps an applied force vector to a pressure field that a Velostat film samples
+at four quadrants. Shear shows up as the *difference* across the footprint. The published
+baseline picked its bump by eye-judging von Mises stress under a single 1&nbsp;N load — no
+shape family, no aspect-ratio sweep, and no link to the pressure the film actually reads.
+
+## The study, in three stages
+
+1. **Reproduce and sweep.** Rebuild the baseline bump in nonlinear contact FEA (hyperelastic
+   silicone, bonded base) and sweep its height.
+2. **Compare profiles.** Five top-face shapes — flat punch, cylinder, crown, tapered crown,
+   dome — pressed by one shared rigid indenter, with contact area left as an output.
+3. **Re-sweep the winner's height.**
+
+The output variable is contact pressure mapped through the measured Velostat R(p) curve — not
+stress, which was the baseline's mistake.
+
+<Figure src="p2/crown_drawing.png" panel alt="Dimensioned SolidWorks drawing of the crown bump: circular base, tapered flank, crowned top on a thin collar." caption="The selected geometry: a ⌀6.11 mm circular base, tapered flank, and crowned top on a 0.5 mm collar slab." />
+
+## What the FEA showed
+
+<FigureRow panel min="128px" items={[
+  { src: "p2/fea_baseline.png", alt: "FEA displacement contour, baseline bump.", label: "Baseline" },
+  { src: "p2/fea_cylinder.png", alt: "FEA displacement contour, cylinder bump.", label: "Cylinder" },
+  { src: "p2/fea_crown.png", alt: "FEA displacement contour, crown bump.", label: "Crown" },
+  { src: "p2/fea_taperedcrown.png", alt: "FEA displacement contour, tapered crown bump.", label: "Tapered crown" },
+  { src: "p2/fea_domed.png", alt: "FEA displacement contour, domed bump.", label: "Dome" },
+]} caption="Displacement under shear, drawn on one common scale. Dome and tapered crown deflect the most; the crown gets almost the same shear response for far less squash." />
+
+The **crown** captures 98% of the best available shear signal while deflecting only 68% as much
+as the dome. But a shape ranking is only meaningful if it isn't just a stiffness ranking in
+disguise — so the study has a built-in control:
+
+<Figure src="p2/chart_profile_control.png" panel wide alt="Two bar charts: the shear channel varies about a third across the four profiles while the normal channel varies only a few percent." caption="The control that makes the result trustworthy: top-face profile moves the shear channel by about a third across arms, while the normal channel barely moves. The ranking is a profile effect, not a compliance artifact." />
+
+Re-sweeping the crown's height then showed there's **no interior optimum** to find:
+
+<Figure src="p2/chart_height_scaling.png" panel wide alt="Log-log plot: shear gain scales as h^0.63 while deflection scales as h^1.14, so gain per unit deflection falls monotonically with height." caption="Shear signal grows as ~h^0.63 while deflection grows as ~h^1.14, so signal-per-deflection falls monotonically. Height isn't an optimization — it's a constraint problem, and the answer is the shortest bump that clears the required signal." />
+
+<SpecTable
+  caption="Top-profile comparison under the shared indenter (shear channel). Baseline row omitted — its shear result is under review."
+  columns={["Profile", "Shear signal, mean |Q| (mN)", "Max deflection (mm)", "Signal ÷ deflection"]}
+  rows={[
+    ["Cylinder", "51.5", "0.19", "0.27"],
+    ["Crown — selected", "67.2", "0.27", "0.25"],
+    ["Tapered crown", "68.6", "0.38", "0.18"],
+    ["Dome", "68.5", "0.40", "0.17"],
+  ]}
+/>
+
+## Fabricating it
+
+The bump sheets are cast in silicone from 3D-printed molds — several profiles at once, so the
+FEA ranking could be checked on the bench — then integrated onto the Velostat and flex-PCB
+stack.
+
+<FigureRow items={[
+  { src: "p2/profiles_pair.jpg", alt: "Two cast silicone bump arrays side by side showing different top profiles.", label: "Cast profiles, side by side" },
+  { src: "p2/strips.jpg", alt: "Long demolded silicone strips covered in dense bump arrays.", label: "Large-area skin" },
+  { src: "p2/assembled_fpc.jpg", alt: "A bump strip bonded to a black backing with a flex-PCB tail.", label: "Integrated on the flex PCB" },
+]} caption="From printed mold to a demolded large-area sheet to an assembled sensor." />
+
+## Where it stands
+
+- **2.4&nbsp;mm is the bottom of the tested height ladder** — the best of six, not proven
+  sufficient. The ladder needs extending downward until the signal actually fails the spec.
+- Bump volume changes with taper — a known confound on that axis. It's measured, not
+  eliminated, using the flat normal channel as the control.
+- **Next stage:** multimodal slip prediction — 50 synchronized grip-and-slip trials (tactile +
+  vision) feeding a model that flags an incipient slip before it happens.

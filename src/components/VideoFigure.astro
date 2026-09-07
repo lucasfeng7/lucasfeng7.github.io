@@ -1,0 +1,43 @@
+---
+interface Props {
+  src: string; // path under /media, e.g. "/media/lc3-handguiding.mp4"
+  poster?: string;
+  caption?: string;
+  ratio?: string; // e.g. "16 / 9"
+}
+const { src, poster, caption, ratio = '16 / 9' } = Astro.props;
+---
+
+<figure class="vfig">
+  <video
+    src={src}
+    poster={poster}
+    style={`aspect-ratio:${ratio}`}
+    muted
+    loop
+    autoplay
+    playsinline
+    preload="metadata"
+    controls></video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .vfig {
+    margin-block: 1.75rem;
+  }
+  .vfig video {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: #000;
+    object-fit: cover;
+  }
+  figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+</style>

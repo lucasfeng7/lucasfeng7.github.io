@@ -1,0 +1,67 @@
+---
+import { site } from '../lib/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div>
+      <p class="footer__name">{site.name}</p>
+      <p class="footer__muted">{site.role}</p>
+    </div>
+    <ul class="footer__links">
+      <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+      <li><a href={site.linkedin} rel="me noopener" target="_blank">{site.linkedinLabel}</a></li>
+      <li><a href={site.resumePath}>Résumé (PDF)</a></li>
+    </ul>
+  </div>
+  <div class="wrap footer__base">
+    <span>© {year} {site.name}</span>
+    <span>Built with Astro · hosted on GitHub Pages</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg-subtle);
+    padding-block: 2.5rem 1.5rem;
+    margin-top: 4rem;
+  }
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 3rem;
+    justify-content: space-between;
+    align-items: start;
+  }
+  .footer__name {
+    font-weight: 600;
+  }
+  .footer__muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  .footer__links {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.92rem;
+  }
+  .footer__links a {
+    color: var(--text-muted);
+  }
+  .footer__links a:hover {
+    color: var(--accent);
+  }
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    color: var(--text-faint);
+    font-size: 0.8rem;
+  }
+</style>

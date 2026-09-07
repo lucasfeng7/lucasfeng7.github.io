@@ -1,0 +1,105 @@
+---
+title: "LC 3-Axis Force Sensor"
+tagline: "A $117 three-axis force sensor built from four commercial load cells — no custom compliant element, no custom PCB — accurate enough to stand in for a $2,000 commercial unit."
+headlineMetric:
+  value: "Agrees to 1.0–2.5% of full scale"
+  label: "versus a commercial reference, across 344,424 in-contact samples on a robot arm"
+role: "Mechanical architecture · calibration methodology · signal processing · validation"
+org: "JHU Neuroengineering & Biomedical Instrumentation Lab"
+dateRange: "2026"
+team:
+  - "with A. Slepyan, K. Murthy, N. Thakor"
+tools:
+  - "SolidWorks"
+  - "Python (regularized least squares)"
+  - "Teensy / C++ firmware"
+  - "UR5e / RTDE"
+  - "FDM printing"
+status: "Extended abstract submitted to an IEEE IROS 2026 workshop (under review)"
+heroImage: "p1/cad_hero.png"
+heroAlt: "Rendered assembly of the LC 3-Axis force sensor: two plates joined by four bar load cells, with converter boards around the perimeter."
+order: 1
+tags: ["Research", "Sensor design", "Calibration"]
+featured: true
+---
+
+## The problem
+
+Affordable multi-axis force sensors are almost always built around a **custom compliant part** —
+a flexure that deforms under load. Whatever creep, hysteresis, and temperature drift that part
+has then becomes the finished sensor's error budget, and a single calibration can't capture it.
+
+The alternative I built uses four commercial load cells *as the structure*. Each one is
+factory-characterized to carry its full rated load, so the error terms are on a datasheet
+instead of in an uncharacterized flexure.
+
+## What I designed
+
+Four TAL221 500&nbsp;g bar load cells join two 3D-printed plates in a square. Each cell only
+senses compression along the vertical axis; together they resolve **F<sub>z</sub>, M<sub>x</sub>,
+and M<sub>y</sub>**. A lateral force is then recovered from the moment it makes about the cell
+plane — which is why the tool's contact height has to be known (here, 38.6&nbsp;mm above the
+cell mid-plane).
+
+<Figure src="p1/cad_exploded.png" panel wide alt="Exploded view of the sensor showing the top plate, four bar load cells, converter boards, and bottom plate." caption="Only 3 of 17 part types are custom: two printed plates and an interchangeable tip. The electronics bill of materials is $116.55." />
+
+Every load cell gets its own NAU7802 24-bit converter, interleaved through an I²C multiplexer
+for about 1200&nbsp;Hz aggregate into a Teensy 4.0. A single fitted **3×4 matrix plus bias**
+maps four tared counts to (F<sub>x</sub>, F<sub>y</sub>, F<sub>z</sub>) — and absorbs assembly
+tolerance, cell-to-cell gain spread, wiring polarity, and cross-coupling in one step. Because
+the fit is what makes the build forgiving, the mechanical design could stay simple.
+
+<Figure src="p1/internals.jpg" alt="The four load cells mounted between the printed plates, with the converter boards and I2C multiplexer." caption="As built — the four cells are the load path; the converters sit on the perimeter and the multiplexer at the center." />
+
+## Calibrating and validating it
+
+I established the lab's calibration method for this class of sensor: load each axis with known
+dead weights, then fit the matrix by **ridge-regularized least squares** (the four-cell system
+is rank 3, not 4). For the lateral axes the sensor is clamped horizontal at the bench edge so
+gravity pulls perpendicular to the axis being loaded.
+
+<FigureRow panel={false} items={[
+  { src: "p1/cal_lateral.jpg", alt: "Sensor clamped horizontally at a bench edge with a mass hanging from the tip on a string.", label: "Lateral — mass hung from the tip" },
+  { src: "p1/cal_axial.jpg", alt: "A calibration mass resting on the sensor tip.", label: "Axial — mass on the tip" }
+]} caption="Dead-weight calibration. Known masses beat calibrating against another sensor — no second instrument's errors enter the fit." />
+
+For an independent check, the sensor and a commercial OptoForce rode in a serial stack on a
+UR5e, so both saw the same contact force. Over **344,424 in-contact samples**, after one scale
+factor per axis, the readings sat within **2.3% / 2.5% / 1.0%** of the reference (r² ≥ 0.993) —
+matching or beating the closest comparable published design.
+
+<Figure src="p1/agreement.png" panel wide alt="Three scatter panels of sensor output against the OptoForce reference, each hugging the 1:1 line." caption="Response against the reference. Dashed line is 1:1; black is a least-squares fit through the origin." />
+
+Finally I used it to close a control loop: **admittance hand-guiding** on the UR5e at
+199.8&nbsp;Hz, where the measured contact force commands the arm's velocity.
+
+<VideoFigure src="/media/lc3-handguiding.mp4" poster="/media/lc3-handguiding.poster.jpg" ratio="3 / 4" caption="Admittance hand-guiding — pushing on the sensor drives the arm. Fast and accurate enough to run on a moving robot, not just a bench." />
+
+## Results
+
+<SpecTable
+  caption="Bench behavior over the calibrated 0–4.9 N range; agreement row is versus the reference on the robot."
+  columns={["Metric", "Fx", "Fy", "Fz"]}
+  rows={[
+    ["Leave-one-out error (N)", "0.043", "0.033", "0.036"],
+    ["Noise floor, 1σ (mN)", "3.2", "3.5", "2.6"],
+    ["Off-axis leakage", "< 1%", "< 1%", "< 1%"],
+    ["Hysteresis (% of span)", "0.11", "0.42", "1.11"],
+    ["Agreement vs. reference (% of full scale)", "2.3", "2.5", "1.0"],
+  ]}
+/>
+
+Cost of the sensing electronics: **$116.55**. Overloads of 19.9–28.7&nbsp;N against a 19.6&nbsp;N
+rating left the unloaded output within 0.05&nbsp;N of zero — a different load-cell rating changes
+the range without changing the design.
+
+## What I'd do differently
+
+- **The fixed-contact-height condition is real.** Lateral force is inferred from a moment, so
+  this design suits tools whose contact point is known, not arbitrary end-effectors.
+- Light assembly preload showed up as a **15–20% load/unload asymmetry**. The fix is a stiffer
+  mount and more preload, not more calibration data.
+- The axial scale factor only reproduced between sessions to about **±9%** — most likely
+  contact-height (lever-arm) variation while the arm was hand-driven during the comparison.
+- Validation was one reference on one rig. A defensible specification needs several masses per
+  axis, run more than once.

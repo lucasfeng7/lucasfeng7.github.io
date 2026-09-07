@@ -1,0 +1,70 @@
+---
+interface Props {
+  role: string;
+  org: string;
+  dateRange: string;
+  team?: string[];
+  tools?: string[];
+  status?: string;
+}
+const { role, org, dateRange, team = [], tools = [], status } = Astro.props;
+const rows: [string, string][] = [
+  ['Role', role],
+  ['Where', org],
+  ['When', dateRange],
+];
+if (team.length) rows.push(['Team', team.join(', ')]);
+if (tools.length) rows.push(['Tools', tools.join(' · ')]);
+if (status) rows.push(['Status', status]);
+---
+
+<dl class="ctx">
+  {
+    rows.map(([k, v]) => (
+      <div class="ctx__row">
+        <dt>{k}</dt>
+        <dd>{v}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .ctx {
+    display: grid;
+    gap: 0.15rem;
+    margin-block: 2rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    max-width: var(--prose-w);
+  }
+  .ctx__row {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0.75rem;
+    padding-block: 0.4rem;
+  }
+  .ctx__row + .ctx__row {
+    border-top: 1px solid var(--border);
+  }
+  dt {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding-top: 0.15rem;
+  }
+  dd {
+    margin: 0;
+    font-size: 0.94rem;
+  }
+  @media (max-width: 480px) {
+    .ctx__row {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+  }
+</style>
