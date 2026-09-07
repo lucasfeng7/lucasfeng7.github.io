@@ -1,0 +1,148 @@
+---
+import { Image } from 'astro:assets';
+import headshot from '../assets/site/headshot.jpg';
+import { site } from '../lib/site';
+---
+
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__photo">
+      <Image
+        src={headshot}
+        alt="Portrait of Lucas Feng"
+        widths={[400, 600, 900]}
+        sizes="(min-width: 860px) 40vw, 100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+
+    <div class="hero__content">
+      <svg
+        class="hero__decor hero__decor--sensor"
+        viewBox="0 0 220 200"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <rect x="70" y="120" width="80" height="26" fill="none" stroke="currentColor" stroke-width="1.4" />
+        <line x1="110" y1="120" x2="110" y2="40" stroke="currentColor" stroke-width="1.4" />
+        <path d="M110 40 L102 56 M110 40 L118 56" fill="none" stroke="currentColor" stroke-width="1.4" />
+        <line x1="70" y1="133" x2="30" y2="150" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3" />
+        <line x1="150" y1="133" x2="190" y2="116" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3" />
+        <circle cx="90" cy="133" r="3" fill="currentColor" />
+        <circle cx="130" cy="133" r="3" fill="currentColor" />
+        <text x="115" y="34" font-size="11" fill="currentColor" font-family="var(--font-sans)">Fz</text>
+        <text x="8" y="163" font-size="10" fill="currentColor" font-family="var(--font-sans)">load cell</text>
+      </svg>
+
+      <h1 class="hero__headline">
+        {site.heroKicker}
+        <br />
+        {site.heroHeadline}
+      </h1>
+
+      <div class="hero__bio">
+        {site.heroBio.map((p) => <p>{p}</p>)}
+      </div>
+
+      <div class="hero__buttons">
+        <a class="btn btn--block" href={site.linkedin} target="_blank" rel="me noopener">
+          LinkedIn
+        </a>
+        <a class="btn btn--block" href="/#projects">Projects</a>
+        <a class="btn btn--block" href="/resume">Resume</a>
+      </div>
+
+      <svg
+        class="hero__decor hero__decor--bump"
+        viewBox="0 0 220 160"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <rect x="20" y="110" width="180" height="18" fill="none" stroke="currentColor" stroke-width="1.4" />
+        <path
+          d="M80 110 C80 70 140 70 140 110"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+        />
+        <path d="M60 60 L84 78" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <path d="M60 60 L58 68 M60 60 L68 62" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <text x="20" y="45" font-size="10" fill="currentColor" font-family="var(--font-sans)">shear, Fx</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 8vw, 5rem);
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 42%) 1fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  .hero__photo {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--bg-subtle);
+  }
+  .hero__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__content {
+    position: relative;
+    text-align: center;
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+  .hero__headline {
+    font-size: clamp(2.1rem, 5.4vw, 3.4rem);
+    line-height: 1.06;
+  }
+  .hero__bio {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 1rem;
+    font-size: 1.02rem;
+    color: var(--text);
+  }
+  .hero__buttons {
+    margin-top: 2rem;
+    display: grid;
+    gap: 0.85rem;
+    max-width: 20rem;
+    margin-inline: auto;
+  }
+  .hero__decor {
+    position: absolute;
+    width: clamp(110px, 14vw, 150px);
+    height: auto;
+    color: var(--text);
+    opacity: 0.85;
+  }
+  .hero__decor--sensor {
+    top: -3.5rem;
+    right: -2rem;
+  }
+  .hero__decor--bump {
+    bottom: -3rem;
+    left: -3rem;
+  }
+
+  @media (max-width: 860px) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .hero__photo {
+      aspect-ratio: 4 / 3;
+    }
+    .hero__decor {
+      display: none;
+    }
+  }
+</style>

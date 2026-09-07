@@ -1,0 +1,97 @@
+---
+import { Image } from 'astro:assets';
+import { getImage } from '../lib/images';
+
+interface Props {
+  href: string;
+  title: string;
+  metric: string;
+  tagline: string;
+  image: string;
+  imageAlt: string;
+  tags?: string[];
+  eager?: boolean;
+}
+const { href, title, metric, tagline, image, imageAlt, tags = [], eager = false } = Astro.props;
+---
+
+<article class="block">
+  <a href={href} class="block__media">
+    <Image
+      src={getImage(image)}
+      alt={imageAlt}
+      widths={[480, 800, 1200, 1600]}
+      sizes="(min-width: 900px) 1080px, 100vw"
+      loading={eager ? 'eager' : 'lazy'}
+    />
+  </a>
+  <div class="block__body">
+    <div class="block__tags">
+      {tags.map((t) => <span class="tag">{t}</span>)}
+    </div>
+    <h3 class="block__title"><a href={href}>{title}</a></h3>
+    <p class="block__metric">{metric}</p>
+    <p class="block__tagline">{tagline}</p>
+    <a class="btn btn--sm block__cta" href={href}>
+      Learn More<span class="visually-hidden"> about {title}</span>
+    </a>
+  </div>
+</article>
+
+<style>
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+  .block__media {
+    display: block;
+    aspect-ratio: 3 / 2;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    min-width: 0;
+  }
+  .block__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .block__body {
+    max-width: 42rem;
+  }
+  .block__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+  .tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    border: 1px solid var(--border-strong);
+    padding: 0.15rem 0.6rem;
+  }
+  .block__title {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+  }
+  .block__title a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .block__metric {
+    margin-top: 0.6rem;
+    font-weight: 650;
+  }
+  .block__tagline {
+    margin-top: 0.4rem;
+    color: var(--text-faint);
+    font-size: 0.98rem;
+  }
+  .block__cta {
+    margin-top: 1.4rem;
+  }
+</style>

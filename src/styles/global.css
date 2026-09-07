@@ -1,56 +1,33 @@
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/work-sans';
+@import '@fontsource-variable/fraunces/opsz.css';
 
-/* ---------- design tokens ---------- */
+/* ---------- design tokens ----------
+   Fixed light palette, pixel-sampled from davisryan.tech screenshots.
+   No dark-mode variant — the reference is a single deliberately high-contrast
+   black/white/navy design and a dark swap would undo that. */
 :root {
   --bg: #ffffff;
-  --bg-subtle: #f7f7f8;
+  --bg-subtle: #f5f5f2;
   --surface: #ffffff;
-  --text: #18181b;
-  --text-muted: #52525b;
-  --text-faint: #71717a;
-  --border: #e4e4e7;
-  --border-strong: #d4d4d8;
-  --accent: #1d4ed8;
+  --text: #000000;
+  --text-muted: #000000;
+  --text-faint: #5a5a5a;
+  --border: #e5e5e5;
+  --border-strong: #cfcfcf;
+  --accent: #253551;
+  --accent-hover: #1b283f;
   --accent-text: #ffffff;
-  --shadow: 0 1px 2px rgba(24, 24, 27, 0.04), 0 8px 24px rgba(24, 24, 27, 0.06);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
 
-  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: 'Work Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Menlo, Consolas, monospace;
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --content-w: 1120px;
+  --radius: 0px;
+  --radius-sm: 6px;
+  --content-w: 1160px;
   --prose-w: 70ch;
-  --nav-h: 60px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #0b0b0c;
-    --bg-subtle: #141416;
-    --surface: #161618;
-    --text: #ededef;
-    --text-muted: #a1a1aa;
-    --text-faint: #8b8b93;
-    --border: #27272a;
-    --border-strong: #3f3f46;
-    --accent: #6ea8ff;
-    --accent-text: #0b0b0c;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.4);
-  }
-}
-:root[data-theme='dark'] {
-  --bg: #0b0b0c;
-  --bg-subtle: #141416;
-  --surface: #161618;
-  --text: #ededef;
-  --text-muted: #a1a1aa;
-  --text-faint: #8b8b93;
-  --border: #27272a;
-  --border-strong: #3f3f46;
-  --accent: #6ea8ff;
-  --accent-text: #0b0b0c;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.4);
+  --nav-h: 76px;
 }
 
 /* ---------- reset ---------- */
@@ -69,13 +46,20 @@ body {
 img, picture, svg, video, canvas { display: block; max-width: 100%; height: auto; }
 input, button, textarea, select { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
-h1, h2, h3, h4 { line-height: 1.2; font-weight: 650; letter-spacing: -0.02em; text-wrap: balance; }
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
 p, li { text-wrap: pretty; }
 
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
 
 /* ---------- layout primitives ---------- */
-.wrap { width: 100%; max-width: var(--content-w); margin-inline: auto; padding-inline: clamp(1.1rem, 4vw, 2.5rem); }
+.wrap { width: 100%; max-width: var(--content-w); margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 3rem); }
 .section { padding-block: clamp(3rem, 8vw, 6rem); }
 .stack > * + * { margin-top: 1rem; }
 .eyebrow {
@@ -87,8 +71,8 @@ p, li { text-wrap: pretty; }
 /* ---------- prose (project body) ---------- */
 .prose { max-width: var(--prose-w); }
 .prose > * + * { margin-top: 1.15rem; }
-.prose h2 { margin-top: 3rem; font-size: clamp(1.35rem, 3vw, 1.7rem); scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
-.prose h3 { margin-top: 2rem; font-size: 1.12rem; color: var(--text); scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
+.prose h2 { margin-top: 3rem; font-size: clamp(1.4rem, 3vw, 1.85rem); scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
+.prose h3 { margin-top: 2rem; font-size: 1.2rem; color: var(--text); scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
 .prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 .prose strong { font-weight: 650; }
 .prose ul, .prose ol { padding-left: 1.3rem; }
@@ -103,15 +87,24 @@ p, li { text-wrap: pretty; }
 /* wide content scrolls inside its own box, never the page */
 .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
+/* ---------- buttons: solid navy pill, matches the reference exactly ---------- */
 .btn {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.6rem 1.05rem; border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong); background: var(--surface);
-  font-weight: 550; font-size: 0.94rem; transition: border-color 0.15s, transform 0.05s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.95rem 1.85rem; border-radius: var(--radius-sm);
+  border: none; background: var(--accent); color: var(--accent-text);
+  font-family: var(--font-sans); font-weight: 700; font-size: 0.86rem;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  transition: background-color 0.15s, transform 0.05s;
+  cursor: pointer;
 }
-.btn:hover { border-color: var(--accent); }
+.btn:hover { background: var(--accent-hover); color: var(--accent-text); }
 .btn:active { transform: translateY(1px); }
-.btn--accent { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.btn--outline {
+  background: transparent; color: var(--text); border: 1.5px solid var(--text);
+}
+.btn--outline:hover { background: var(--text); color: var(--bg); }
+.btn--block { width: 100%; }
+.btn--sm { padding: 0.6rem 1.3rem; font-size: 0.76rem; }
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;

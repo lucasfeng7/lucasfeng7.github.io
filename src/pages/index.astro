@@ -1,37 +1,26 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import { site } from '../lib/site';
+import Hero from '../components/Hero.astro';
+import ProjectBlock from '../components/ProjectBlock.astro';
 
-const featured = (await getCollection('projects'))
-  .filter((p) => p.data.featured)
-  .sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <BaseLayout>
-  <section class="hero section">
-    <div class="wrap">
-      <p class="eyebrow">{site.role}</p>
-      <h1>{site.name}</h1>
-      <p class="hero__lead">{site.tagline}</p>
-      <div class="hero__cta">
-        <a class="btn btn--accent" href="/projects">See the projects</a>
-        <a class="btn" href={site.resumePath}>Résumé (PDF)</a>
-      </div>
-    </div>
-  </section>
+  <Hero />
 
-  <section class="section section--alt">
+  <section id="projects" class="section projects">
     <div class="wrap">
-      <div class="row">
-        <p class="eyebrow">Featured work</p>
-        <a href="/projects" class="row__all">All projects →</a>
-      </div>
-      <div class="grid">
+      <p class="eyebrow">Projects</p>
+      <h2 class="projects__title">Selected work</h2>
+
+      <div class="projects__list">
         {
-          featured.map((p) => (
-            <ProjectCard
+          projects.map((p, i) => (
+            <ProjectBlock
               href={`/projects/${p.id}`}
               title={p.data.title}
               metric={p.data.headlineMetric.value}
@@ -39,85 +28,25 @@ const featured = (await getCollection('projects'))
               image={p.data.heroImage}
               imageAlt={p.data.heroAlt}
               tags={p.data.tags}
+              eager={i === 0}
             />
           ))
         }
       </div>
     </div>
   </section>
-
-  <section class="section">
-    <div class="wrap contact">
-      <p class="eyebrow">Contact</p>
-      <p class="contact__line">
-        Looking for a Summer 2027 mechanical engineering internship.
-      </p>
-      <p class="contact__links">
-        <a href={`mailto:${site.email}`}>{site.email}</a>
-        <span aria-hidden="true">·</span>
-        <a href={site.linkedin} target="_blank" rel="me noopener">{site.linkedinLabel}</a>
-      </p>
-    </div>
-  </section>
 </BaseLayout>
 
 <style>
-  .hero {
-    padding-block: clamp(3.5rem, 12vw, 7rem);
+  .projects__title {
+    margin-top: 0.4rem;
+    font-size: clamp(2rem, 5vw, 3rem);
   }
-  .hero h1 {
-    margin-top: 0.5rem;
-    font-size: clamp(2.4rem, 8vw, 4rem);
-  }
-  .hero__lead {
-    margin-top: 1.25rem;
-    max-width: 46ch;
-    font-size: clamp(1.05rem, 2.6vw, 1.35rem);
-    color: var(--text-muted);
-  }
-  .hero__cta {
-    margin-top: 2rem;
+  .projects__list {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-  .section--alt {
-    background: var(--bg-subtle);
-    border-block: 1px solid var(--border);
-  }
-  .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-  }
-  .row__all {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-  }
-  .row__all:hover {
-    color: var(--accent);
-  }
-  .grid {
-    margin-top: 1.75rem;
-    display: grid;
-    gap: 1.75rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
-  }
-  .contact__line {
-    margin-top: 0.5rem;
-    font-size: clamp(1.15rem, 3vw, 1.6rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    max-width: 24ch;
-  }
-  .contact__links {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.75rem;
-    color: var(--text-muted);
-  }
-  .contact__links a:hover {
-    color: var(--accent);
+    flex-direction: column;
+    gap: clamp(3.5rem, 9vw, 6rem);
+    min-width: 0;
   }
 </style>

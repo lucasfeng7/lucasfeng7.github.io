@@ -44,6 +44,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       <slot />
     </main>
     <Footer />
+    <script is:inline>
+      // The hero headline swaps from a fallback font to Fraunces once it loads,
+      // which reflows the page and can leave a same-load "#projects" navigation
+      // scrolled to the wrong (pre-reflow) position. Re-settle once fonts are in.
+      (function () {
+        function jumpToHash() {
+          if (!location.hash) return;
+          var el = document.getElementById(location.hash.slice(1));
+          if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(jumpToHash);
+        } else {
+          window.addEventListener('load', jumpToHash);
+        }
+      })();
+    </script>
     <style>
       .skip {
         position: absolute;
