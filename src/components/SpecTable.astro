@@ -39,25 +39,27 @@ const { caption, columns, rows } = Astro.props;
   caption {
     text-align: left;
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--graphite);
     margin-bottom: 0.5rem;
   }
   th,
   td {
     text-align: left;
     padding: 0.6rem 0.9rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--hairline);
     white-space: nowrap;
   }
   thead th {
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    border-bottom: 1px solid var(--border-strong);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--graphite);
+    border-bottom: 1.5px solid var(--ink);
   }
   tbody th {
     font-weight: 550;
+  }
+  td {
+    font-variant-numeric: tabular-nums;
   }
   tbody tr:last-child :is(th, td) {
     border-bottom: none;

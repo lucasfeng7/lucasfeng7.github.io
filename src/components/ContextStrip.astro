@@ -8,63 +8,59 @@ interface Props {
   status?: string;
 }
 const { role, org, dateRange, team = [], tools = [], status } = Astro.props;
-const rows: [string, string][] = [
-  ['Role', role],
-  ['Where', org],
-  ['When', dateRange],
+
+// Laid out like a drawing title block: short fields share a row, long ones span it.
+const cells: { label: string; value: string; span: 1 | 2 | 3 }[] = [
+  { label: 'Lab', value: org, span: 2 },
+  { label: 'Year', value: dateRange, span: 1 },
+  { label: 'My role', value: role, span: team.length ? 2 : 3 },
 ];
-if (team.length) rows.push(['Team', team.join(', ')]);
-if (tools.length) rows.push(['Tools', tools.join(' · ')]);
-if (status) rows.push(['Status', status]);
+if (team.length) cells.push({ label: 'Team', value: team.join(', '), span: 1 });
+if (tools.length) cells.push({ label: 'Tools', value: tools.join(', '), span: 3 });
+if (status) cells.push({ label: 'Status', value: status, span: 3 });
 ---
 
-<dl class="ctx">
+<dl class="tblock">
   {
-    rows.map(([k, v]) => (
-      <div class="ctx__row">
-        <dt>{k}</dt>
-        <dd>{v}</dd>
+    cells.map((c) => (
+      <div class="tblock__cell" style={`--span:${c.span}`}>
+        <dt>{c.label}</dt>
+        <dd>{c.value}</dd>
       </div>
     ))
   }
 </dl>
 
 <style>
-  .ctx {
+  .tblock {
     display: grid;
-    gap: 0.15rem;
-    margin-block: 2rem;
-    padding: 1.1rem 1.25rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    max-width: var(--prose-w);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-block: 2.5rem;
+    border: 1.5px solid var(--ink);
+    max-width: 60rem;
   }
-  .ctx__row {
-    display: grid;
-    grid-template-columns: 5.5rem 1fr;
-    gap: 0.75rem;
-    padding-block: 0.4rem;
-  }
-  .ctx__row + .ctx__row {
-    border-top: 1px solid var(--border);
+  .tblock__cell {
+    padding: 0.7rem 0.9rem 0.8rem;
+    border-right: 1px solid var(--aluminum);
+    border-bottom: 1px solid var(--aluminum);
+    margin: 0 -1px -1px 0;
+    grid-column: span var(--span);
   }
   dt {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    padding-top: 0.15rem;
+    font-size: 0.78rem;
+    color: var(--graphite);
   }
   dd {
-    margin: 0;
-    font-size: 0.94rem;
+    margin: 0.15rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.45;
   }
-  @media (max-width: 480px) {
-    .ctx__row {
+  @media (max-width: 640px) {
+    .tblock {
       grid-template-columns: 1fr;
-      gap: 0.1rem;
+    }
+    .tblock__cell {
+      grid-column: auto;
     }
   }
 </style>

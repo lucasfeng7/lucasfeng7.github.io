@@ -26,7 +26,7 @@ const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
   <article>
     <header class="phead">
       <div class="wrap">
-        <a href="/#projects" class="back">← All projects</a>
+        <a href="/#work" class="back">All projects</a>
         <h1>{data.title}</h1>
         <p class="lead">{data.tagline}</p>
         <MetricBadge value={data.headlineMetric.value} label={data.headlineMetric.label} />
@@ -70,25 +70,31 @@ const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
 
 <style>
   .phead {
-    padding-top: 2.5rem;
+    padding-top: clamp(2rem, 5vw, 3.5rem);
   }
   .back {
-    font-size: 0.88rem;
-    color: var(--text-muted);
+    font-size: var(--step--1);
+    color: var(--graphite);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
   .back:hover {
-    color: var(--accent);
+    color: var(--layout-blue);
   }
   .phead h1 {
-    margin-top: 0.9rem;
-    font-size: clamp(1.7rem, 5vw, 2.6rem);
+    margin-top: 1rem;
+    font-size: var(--step-4);
+    font-stretch: 125%;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
   }
   .phead .lead {
-    margin-top: 0.8rem;
-    max-width: var(--prose-w);
+    margin-top: 1.25rem;
+    max-width: 52ch;
   }
   .phead :global(.metric) {
-    margin-top: 1.5rem;
+    margin-top: 2rem;
   }
   .phero {
     margin-top: 2.5rem;
@@ -100,9 +106,8 @@ const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
     width: auto;
     height: auto;
     margin-inline: auto;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: #fafafa;
+    border-radius: 0;
+    background: var(--paper);
   }
   .plinks {
     display: flex;
@@ -110,7 +115,7 @@ const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
     gap: 0.75rem;
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--hairline);
     max-width: var(--prose-w);
   }
 </style>

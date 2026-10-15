@@ -16,7 +16,7 @@ const {
   ogImage = '/og-default.png',
 } = Astro.props;
 
-const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}`;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
@@ -45,8 +45,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     </main>
     <Footer />
     <script is:inline>
-      // The hero headline swaps from a fallback font to Fraunces once it loads,
-      // which reflows the page and can leave a same-load "#projects" navigation
+      // The headline swaps from a fallback font to Archivo once it loads,
+      // which reflows the page and can leave a same-load "#work" navigation
       // scrolled to the wrong (pre-reflow) position. Re-settle once fonts are in.
       (function () {
         function jumpToHash() {
@@ -66,10 +66,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
         position: absolute;
         left: 0.5rem;
         top: -3rem;
-        background: var(--surface);
-        border: 1px solid var(--border-strong);
+        background: var(--paper);
+        border: 1px solid var(--aluminum);
         padding: 0.5rem 0.9rem;
-        border-radius: var(--radius-sm);
+        border-radius: 0;
         transition: top 0.15s;
         z-index: 100;
       }

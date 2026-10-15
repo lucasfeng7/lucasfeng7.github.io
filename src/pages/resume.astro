@@ -6,8 +6,7 @@ import { site } from '../lib/site';
 <BaseLayout title="Résumé" description="Lucas Feng — résumé.">
   <section class="section">
     <div class="wrap head">
-      <p class="eyebrow">Résumé</p>
-      <h1>Résumé.</h1>
+      <h1>Résumé</h1>
       <p class="lead">{site.tagline}</p>
       <a class="btn" href={site.resumePath} download>Download PDF</a>
     </div>
@@ -23,17 +22,15 @@ import { site } from '../lib/site';
 </BaseLayout>
 
 <style>
-  .head {
-    text-align: center;
-    max-width: 46rem;
-  }
   .head h1 {
-    margin-top: 0.5rem;
-    font-size: clamp(3rem, 9vw, 5.5rem);
+    font-size: var(--step-4);
+    font-stretch: 125%;
+    font-weight: 800;
+    letter-spacing: -0.03em;
   }
   .head .lead {
     margin-top: 1.25rem;
-    margin-inline: auto;
+    max-width: 52ch;
   }
   .head .btn {
     margin-top: 2rem;
@@ -42,16 +39,16 @@ import { site } from '../lib/site';
     margin-top: 3rem;
     width: 100%;
     height: min(85vh, 1100px);
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
+    border: 1px solid var(--hairline);
+    background: var(--panel);
   }
   .fallback {
     margin-top: 1rem;
     font-size: 0.9rem;
-    color: var(--text-faint);
+    color: var(--graphite);
   }
   .fallback a {
-    color: var(--accent);
+    color: var(--layout-blue);
     text-decoration: underline;
   }
 </style>

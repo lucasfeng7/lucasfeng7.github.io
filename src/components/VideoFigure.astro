@@ -29,15 +29,15 @@ const { src, poster, caption, ratio = '16 / 9' } = Astro.props;
   .vfig video {
     width: 100%;
     height: auto;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
+    border-radius: 0;
+    border: 1px solid var(--hairline);
     background: #000;
     object-fit: cover;
   }
   figcaption {
     margin-top: 0.6rem;
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--graphite);
     line-height: 1.5;
   }
 </style>

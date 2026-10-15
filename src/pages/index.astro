@@ -1,8 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import ProjectBlock from '../components/ProjectBlock.astro';
+import headshot from '../assets/site/headshot.jpg';
+import { site } from '../lib/site';
 
 const projects = (await getCollection('projects')).sort(
   (a, b) => a.data.order - b.data.order,
@@ -12,41 +15,103 @@ const projects = (await getCollection('projects')).sort(
 <BaseLayout>
   <Hero />
 
-  <section id="projects" class="section projects">
+  <section id="work" class="section">
     <div class="wrap">
-      <p class="eyebrow">Projects</p>
-      <h2 class="projects__title">Selected work</h2>
+      <div class="section-head">
+        <h2>Projects</h2>
+        <p>{projects.length} case studies</p>
+      </div>
 
-      <div class="projects__list">
+      <div class="projects">
         {
-          projects.map((p, i) => (
+          projects.map((p) => (
             <ProjectBlock
               href={`/projects/${p.id}`}
               title={p.data.title}
               metric={p.data.headlineMetric.value}
+              metricLabel={p.data.headlineMetric.label}
               tagline={p.data.tagline}
-              image={p.data.heroImage}
-              imageAlt={p.data.heroAlt}
+              image={p.data.cardImage ?? p.data.heroImage}
+              imageAlt={p.data.cardAlt ?? p.data.heroAlt}
               tags={p.data.tags}
-              eager={i === 0}
+              meta={`${p.data.org}, ${p.data.dateRange}`}
             />
           ))
         }
       </div>
     </div>
   </section>
+
+  <section id="about" class="section about-section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>About</h2>
+      </div>
+      <div class="about">
+        <div class="about__photo">
+          <Image src={headshot} alt="Portrait of Lucas Feng" widths={[320, 480, 640]} sizes="(min-width: 820px) 320px, 60vw" loading="lazy" />
+        </div>
+        <div class="about__text">
+          {site.about.map((p) => <p>{p}</p>)}
+          <ul class="about__contact">
+            <li><a class="link" href={`mailto:${site.email}`}>{site.email}</a></li>
+            <li><a class="link" href={site.linkedin} target="_blank" rel="me noopener">LinkedIn</a></li>
+            <li><a class="link" href={site.github} target="_blank" rel="me noopener">GitHub</a></li>
+            <li><a class="link" href="/resume">Résumé</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  .projects__title {
-    margin-top: 0.4rem;
-    font-size: clamp(2rem, 5vw, 3rem);
+  #work,
+  #about {
+    scroll-margin-top: var(--nav-h);
   }
-  .projects__list {
-    margin-top: clamp(2.5rem, 6vw, 4rem);
-    display: flex;
-    flex-direction: column;
+  .projects {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    display: grid;
     gap: clamp(3.5rem, 9vw, 6rem);
-    min-width: 0;
+  }
+  .about-section {
+    padding-top: 0;
+  }
+  .about {
+    margin-top: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    grid-template-columns: minmax(180px, 280px) minmax(0, 1fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .about__photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+  .about__text {
+    max-width: 60ch;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    display: grid;
+    gap: 1rem;
+  }
+  .about__contact {
+    list-style: none;
+    padding: 0;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.75rem;
+    font-size: var(--step-0);
+  }
+  @media (max-width: 640px) {
+    .about {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .about__photo {
+      max-width: 240px;
+    }
   }
 </style>
