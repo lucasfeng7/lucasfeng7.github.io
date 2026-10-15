@@ -23,10 +23,10 @@ import { site } from '../lib/site';
 
 <style>
   .head h1 {
-    font-size: var(--step-4);
-    font-stretch: 125%;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-size: var(--text-h1);
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    line-height: 1;
   }
   .head .lead {
     margin-top: 1.25rem;
@@ -39,16 +39,16 @@ import { site } from '../lib/site';
     margin-top: 3rem;
     width: 100%;
     height: min(85vh, 1100px);
-    border: 1px solid var(--hairline);
-    background: var(--panel);
+    border: 1px solid var(--line);
+    background: var(--surface);
   }
   .fallback {
     margin-top: 1rem;
     font-size: 0.9rem;
-    color: var(--graphite);
+    color: var(--muted);
   }
   .fallback a {
-    color: var(--layout-blue);
+    color: var(--accent);
     text-decoration: underline;
   }
 </style>

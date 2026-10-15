@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage as optimizeImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContextStrip from '../../components/ContextStrip.astro';
 import MetricBadge from '../../components/MetricBadge.astro';
@@ -8,25 +8,38 @@ import Figure from '../../components/Figure.astro';
 import FigureRow from '../../components/FigureRow.astro';
 import SpecTable from '../../components/SpecTable.astro';
 import VideoFigure from '../../components/VideoFigure.astro';
+import Icon from '../../components/Icon.astro';
 import { getImage } from '../../lib/images';
+import { site } from '../../lib/site';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((p, i) => ({
+    params: { slug: p.id },
+    props: { project: p, next: projects[(i + 1) % projects.length] },
+  }));
 }
 
-const { project } = Astro.props;
+const { project, next } = Astro.props;
 const { data } = project;
 const { Content } = await render(project);
 const hero = getImage(data.heroImage);
+const nextCard = getImage(next.data.cardImage ?? next.data.heroImage);
+const og = await optimizeImage({
+  src: getImage(data.cardImage ?? data.heroImage),
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  format: 'jpg',
+});
 const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
 ---
 
-<BaseLayout title={data.title} description={data.tagline}>
+<BaseLayout title={data.title} description={data.tagline} ogImage={og.src}>
   <article>
     <header class="phead">
-      <div class="wrap">
-        <a href="/#work" class="back">All projects</a>
+      <div class="wrap col">
+        <a href="/#projects" class="back">All projects</a>
         <h1>{data.title}</h1>
         <p class="lead">{data.tagline}</p>
         <MetricBadge value={data.headlineMetric.value} label={data.headlineMetric.label} />
@@ -35,11 +48,21 @@ const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
 
     <div class="phero">
       <div class="wrap">
-        <Image src={hero} alt={data.heroAlt} widths={[640, 1024, 1440, 1920]} sizes="(min-width: 1120px) 1080px, 100vw" loading="eager" fetchpriority="high" />
+        <div class="phero__frame">
+          <Image
+            src={hero}
+            alt={data.heroAlt}
+            widths={[640, 1024, 1440, 1920].filter((w) => w <= hero.width).concat(hero.width)}
+            sizes="(min-width: 1120px) 1080px, 100vw"
+            loading="eager"
+            fetchpriority="high"
+            style={`max-width:min(100%, ${hero.width}px)`}
+          />
+        </div>
       </div>
     </div>
 
-    <div class="wrap">
+    <div class="wrap col">
       <ContextStrip
         role={data.role}
         org={data.org}
@@ -57,41 +80,70 @@ const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
         data.links.length > 0 && (
           <div class="plinks">
             {data.links.map((l) => (
-              <a class="btn" href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+              <a class="btn btn--secondary" href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
                 {l.label}
               </a>
             ))}
           </div>
         )
       }
+
+      <footer class="pend">
+        {
+          next.id !== project.id && (
+            <a class="next" href={`/projects/${next.id}`}>
+              <div class="next__media">
+                <Image src={nextCard} alt="" widths={[320, 640]} sizes="200px" loading="lazy" style={next.data.cardPosition ? `object-position:${next.data.cardPosition}` : undefined} />
+              </div>
+              <div class="next__text">
+                <span class="next__title"><span class="next__key">Next project:</span> {next.data.title}</span>
+                <span class="next__tagline">{next.data.tagline}</span>
+              </div>
+            </a>
+          )
+        }
+
+        <div class="pend__contact">
+          <h2>Want to talk about this project?</h2>
+          <div class="pend__actions">
+            <a class="btn" href={`mailto:${site.email}`}><Icon name="mail" /> Email me</a>
+            <a class="btn btn--secondary" href="/resume"><Icon name="file" /> Résumé</a>
+          </div>
+        </div>
+      </footer>
     </div>
   </article>
 </BaseLayout>
 
 <style>
+  /* one centered reading column; the hero frame stays full width */
+  .col {
+    max-width: calc(48rem + 2 * var(--gutter));
+  }
+  .col > .prose {
+    max-width: none;
+  }
   .phead {
     padding-top: clamp(2rem, 5vw, 3.5rem);
   }
   .back {
-    font-size: var(--step--1);
-    color: var(--graphite);
+    font-size: var(--text-sm);
+    color: var(--muted);
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
   .back:hover {
-    color: var(--layout-blue);
+    color: var(--accent);
   }
   .phead h1 {
     margin-top: 1rem;
-    font-size: var(--step-4);
-    font-stretch: 125%;
-    font-weight: 800;
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+    font-weight: 750;
     letter-spacing: -0.03em;
-    line-height: 0.98;
+    line-height: 1.04;
   }
   .phead .lead {
     margin-top: 1.25rem;
-    max-width: 52ch;
   }
   .phead :global(.metric) {
     margin-top: 2rem;
@@ -99,23 +151,99 @@ const mdxComponents = { Figure, FigureRow, SpecTable, VideoFigure };
   .phero {
     margin-top: 2.5rem;
   }
-  .phero :global(img) {
+  .phero__frame {
+    padding: clamp(1rem, 4vw, 3rem);
+    border-radius: var(--r-media);
+    background: var(--surface);
+  }
+  /* renders sit on white; multiply drops that white into the frame tone */
+  .phero__frame :global(img) {
     display: block;
-    max-width: 100%;
-    max-height: 72vh;
+    max-height: 64vh;
     width: auto;
     height: auto;
     margin-inline: auto;
-    border-radius: 0;
-    background: var(--paper);
+    mix-blend-mode: multiply;
   }
   .plinks {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--hairline);
-    max-width: var(--prose-w);
+  }
+
+  .pend {
+    margin-block: clamp(4rem, 8vw, 6rem) var(--section-gap);
+    display: grid;
+    gap: 2.5rem;
+  }
+  .next {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--r-media);
+    border: 1px solid var(--line);
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .next:hover {
+    border-color: #c9cdd5;
+    background: var(--surface);
+  }
+  .next__media {
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .next__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .next__text {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .next__key {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .next__title {
+    font-size: var(--text-h3);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .next:hover .next__title {
+    color: var(--accent);
+  }
+  .next__tagline {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .pend__contact {
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    border-radius: var(--r-media);
+    background: var(--surface);
+  }
+  .pend__contact h2 {
+    font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.75rem);
+  }
+  .pend__actions {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  @media (max-width: 560px) {
+    .next {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .next__tagline {
+      display: none;
+    }
   }
 </style>

@@ -5,40 +5,29 @@ const year = new Date().getFullYear();
 
 <footer class="footer">
   <div class="wrap footer__inner">
-    <p>
-      <span class="footer__name">{site.name}</span>
-      <span class="footer__muted">{site.role}</span>
-    </p>
+    <p>© {year} {site.name}</p>
     <ul class="footer__links">
-      <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+      <li><a href={`mailto:${site.email}`}>Email</a></li>
       <li><a href={site.linkedin} rel="me noopener" target="_blank">LinkedIn</a></li>
       <li><a href={site.github} rel="me noopener" target="_blank">GitHub</a></li>
       <li><a href={site.resumePath}>Résumé (PDF)</a></li>
     </ul>
-    <p class="footer__muted footer__year">© {year}</p>
   </div>
 </footer>
 
 <style>
   .footer {
-    margin-top: 4rem;
-    border-top: 1.5px solid var(--ink);
-    padding-block: 1.75rem 2.5rem;
-    font-size: 0.92rem;
+    border-top: 1px solid var(--line);
+    padding-block: 2rem;
+    font-size: var(--text-sm);
+    color: var(--muted);
   }
   .footer__inner {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem 2.5rem;
+    gap: 1rem 2rem;
     justify-content: space-between;
-    align-items: baseline;
-  }
-  .footer__name {
-    font-weight: 650;
-    margin-right: 0.75rem;
-  }
-  .footer__muted {
-    color: var(--graphite);
+    align-items: center;
   }
   .footer__links {
     list-style: none;
@@ -48,6 +37,6 @@ const year = new Date().getFullYear();
     gap: 0.5rem 1.5rem;
   }
   .footer__links a:hover {
-    color: var(--layout-blue);
+    color: var(--ink);
   }
 </style>

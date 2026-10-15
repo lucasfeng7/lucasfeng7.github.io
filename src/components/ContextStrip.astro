@@ -9,58 +9,43 @@ interface Props {
 }
 const { role, org, dateRange, team = [], tools = [], status } = Astro.props;
 
-// Laid out like a drawing title block: short fields share a row, long ones span it.
-const cells: { label: string; value: string; span: 1 | 2 | 3 }[] = [
-  { label: 'Lab', value: org, span: 2 },
-  { label: 'Year', value: dateRange, span: 1 },
-  { label: 'My role', value: role, span: team.length ? 2 : 3 },
+const items: { label: string; value: string }[] = [
+  { label: 'My role', value: role },
+  { label: 'Lab', value: org },
+  { label: 'Year', value: dateRange },
 ];
-if (team.length) cells.push({ label: 'Team', value: team.join(', '), span: 1 });
-if (tools.length) cells.push({ label: 'Tools', value: tools.join(', '), span: 3 });
-if (status) cells.push({ label: 'Status', value: status, span: 3 });
+if (team.length) items.push({ label: 'Team', value: team.join(', ') });
+if (tools.length) items.push({ label: 'Tools', value: tools.join(', ') });
+if (status) items.push({ label: 'Status', value: status });
 ---
 
-<dl class="tblock">
+<dl class="meta">
   {
-    cells.map((c) => (
-      <div class="tblock__cell" style={`--span:${c.span}`}>
-        <dt>{c.label}</dt>
-        <dd>{c.value}</dd>
+    items.map((it) => (
+      <div>
+        <dt>{it.label}</dt>
+        <dd>{it.value}</dd>
       </div>
     ))
   }
 </dl>
 
 <style>
-  .tblock {
+  .meta {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-block: 2.5rem;
-    border: 1.5px solid var(--ink);
-    max-width: 60rem;
-  }
-  .tblock__cell {
-    padding: 0.7rem 0.9rem 0.8rem;
-    border-right: 1px solid var(--aluminum);
-    border-bottom: 1px solid var(--aluminum);
-    margin: 0 -1px -1px 0;
-    grid-column: span var(--span);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem 2.5rem;
+    margin-block: 2.5rem 3rem;
+    padding-block: 2rem;
+    border-block: 1px solid var(--line);
   }
   dt {
-    font-size: 0.78rem;
-    color: var(--graphite);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--muted);
   }
   dd {
-    margin: 0.15rem 0 0;
-    font-size: 0.95rem;
-    line-height: 1.45;
-  }
-  @media (max-width: 640px) {
-    .tblock {
-      grid-template-columns: 1fr;
-    }
-    .tblock__cell {
-      grid-column: auto;
-    }
+    margin: 0.3rem 0 0;
+    line-height: 1.5;
   }
 </style>

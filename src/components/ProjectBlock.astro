@@ -6,105 +6,127 @@ interface Props {
   href: string;
   title: string;
   metric: string;
-  metricLabel: string;
   tagline: string;
   image: string;
   imageAlt: string;
+  imagePosition?: string;
   tags?: string[];
-  meta?: string;
   eager?: boolean;
 }
-const { href, title, metric, metricLabel, tagline, image, imageAlt, tags = [], meta, eager = false } = Astro.props;
+const { href, title, metric, tagline, image, imageAlt, imagePosition = '50% 50%', tags = [], eager = false } = Astro.props;
 ---
 
-<article class="project">
-  <a href={href} class="project__media" tabindex="-1" aria-hidden="true">
+<article class="card">
+  <div class="card__media">
     <Image
       src={getImage(image)}
       alt={imageAlt}
-      widths={[480, 800, 1200]}
-      sizes="(min-width: 900px) 560px, 100vw"
+      widths={[480, 720, 1080]}
+      sizes="(min-width: 900px) 560px, 92vw"
       loading={eager ? 'eager' : 'lazy'}
+      style={`object-position:${imagePosition}`}
     />
-  </a>
-  <div class="project__body">
-    {meta && <p class="project__meta">{meta}</p>}
-    <h3 class="project__title"><a href={href}>{title}</a></h3>
-    <p class="project__tagline">{tagline}</p>
-    <dl class="project__result">
-      <dt>Result</dt>
-      <dd><strong>{metric}</strong> {metricLabel}</dd>
-    </dl>
-    {tags.length > 0 && <p class="project__tags">{tags.join(', ')}</p>}
-    <a class="link project__cta" href={href}>Read the case study<span class="visually-hidden">: {title}</span></a>
+  </div>
+  <div class="card__body">
+    {tags.length > 0 && (
+      <ul class="card__tags" aria-label="Topics">
+        {tags.map((t) => <li>{t}</li>)}
+      </ul>
+    )}
+    <h3 class="card__title"><a href={href}>{title}</a></h3>
+    <p class="card__tagline">{tagline}</p>
+    <p class="card__result"><span>Result:</span> {metric}</p>
+    <span class="card__cta" aria-hidden="true">Read the case study</span>
   </div>
 </article>
 
 <style>
-  .project {
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    align-items: center;
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
   }
-  .project__media {
-    display: block;
+  .card__media {
     aspect-ratio: 4 / 3;
-    background: var(--paper);
-    border: 1px solid var(--hairline);
+    border-radius: var(--r-media);
     overflow: hidden;
+    background: var(--surface);
   }
-  .project__media :global(img) {
+  .card__media :global(img) {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    padding: clamp(0.5rem, 2vw, 1.25rem);
+    object-fit: cover;
+    transition: transform 0.7s var(--ease-out);
   }
-  .project__meta {
-    color: var(--graphite);
-    font-size: var(--step--1);
+  .card:hover .card__media :global(img) {
+    transform: scale(1.035);
   }
-  .project__title {
-    margin-top: 0.35rem;
-    font-size: var(--step-3);
+  .card__body {
+    padding-top: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
-  .project__title a:hover {
-    color: var(--layout-blue);
+  .card__tags {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.9rem;
   }
-  .project__tagline {
-    margin-top: 0.9rem;
-    max-width: 52ch;
+  .card__tags li {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--surface);
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
   }
-  .project__result {
-    margin-top: 1.25rem;
-    padding-left: 1rem;
-    border-left: 2px solid var(--layout-blue);
-    max-width: 52ch;
+  .card__title {
+    font-size: var(--text-h3);
+    line-height: 1.2;
   }
-  .project__result dt {
-    font-size: var(--step--1);
-    color: var(--graphite);
+  /* the title link covers the whole card */
+  .card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--r-media);
   }
-  .project__result dd {
-    margin: 0.1rem 0 0;
+  .card__title a:focus-visible {
+    outline: none;
+  }
+  .card__title a:focus-visible::after {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+  .card:hover .card__title {
+    color: var(--accent);
+  }
+  .card__tagline {
+    margin-top: 0.6rem;
+    color: var(--muted);
+  }
+  .card__result {
+    margin-top: 1rem;
+    font-weight: 600;
     line-height: 1.45;
   }
-  .project__result strong {
-    font-weight: 650;
+  .card__result span {
+    color: var(--muted);
+    font-weight: 500;
   }
-  .project__tags {
-    margin-top: 1.1rem;
-    color: var(--graphite);
-    font-size: var(--step--1);
+  .card__cta {
+    margin-top: auto;
+    padding-top: 1.25rem;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.22em;
   }
-  .project__cta {
-    display: inline-block;
-    margin-top: 1.25rem;
-  }
-
-  @media (max-width: 820px) {
-    .project {
-      grid-template-columns: minmax(0, 1fr);
-    }
+  .card:hover .card__cta {
+    text-decoration-thickness: 2.5px;
   }
 </style>

@@ -37,17 +37,17 @@ const sizes = wide
     width: auto;
     height: auto;
     margin-inline: auto;
-    border-radius: 0;
-    border: 1px solid var(--hairline);
+    border-radius: var(--r-media);
+    border: 1px solid var(--line);
   }
   .fig--panel :global(img) {
-    background: var(--paper);
+    background: var(--bg);
     padding: clamp(0.5rem, 2vw, 1.25rem);
   }
   figcaption {
     margin-top: 0.6rem;
     font-size: 0.85rem;
-    color: var(--graphite);
+    color: var(--muted);
     line-height: 1.5;
     max-width: 66ch;
   }

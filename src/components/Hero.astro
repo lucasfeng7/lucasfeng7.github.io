@@ -1,263 +1,102 @@
 ---
 import { Image } from 'astro:assets';
-import { getImage } from '../lib/images';
+import headshot from '../assets/site/headshot.jpg';
+import Icon from './Icon.astro';
 import { site } from '../lib/site';
-
-const render = getImage('p1/cad_hero.png');
-
-// Callouts on the LC 3-Axis render. Coordinates are in a 1200 x 600 stage; the
-// render is drawn at x 290..942, y 20..580 (scale 0.946 of its 689 x 592 pixels).
-const callouts = [
-  {
-    side: 'left',
-    at: [270, 300],
-    to: [484, 382],
-    title: 'Four TAL221 load cells',
-    note: 'The entire load path. No custom flexure.',
-  },
-  {
-    side: 'left',
-    at: [270, 455],
-    to: [385, 384],
-    title: 'One NAU7802 converter per cell',
-    note: '24-bit, interleaved to 1200 Hz',
-  },
-  {
-    side: 'right',
-    at: [960, 70],
-    to: [744, 124],
-    title: 'Two 3D-printed plates',
-    note: 'Only 3 of 17 part types are custom',
-  },
-  {
-    side: 'right',
-    at: [960, 250],
-    to: [612, 216],
-    title: 'Interchangeable tip',
-    note: 'Contact height feeds the lateral-force estimate',
-  },
-] as const;
-
-const pct = (v: number, of: number) => `${(v / of) * 100}%`;
 ---
 
 <section class="hero">
-  <div class="wrap">
-    <h1 class="hero__name">{site.name}</h1>
-    <div class="hero__intro">
-      <p class="lead">{site.heroStatement}</p>
-      <div class="hero__actions">
-        <a class="btn" href="/#work">See projects</a>
-        <a class="btn btn--ghost" href="/resume">Résumé</a>
-      </div>
+  <div class="wrap hero__grid">
+    <div class="hero__photo">
+      <Image
+        src={headshot}
+        alt="Portrait of Lucas Feng"
+        widths={[400, 640, 960]}
+        sizes="(min-width: 860px) 440px, 90vw"
+        loading="eager"
+        fetchpriority="high"
+      />
     </div>
 
-    <figure class="stage">
-      <div class="stage__canvas">
-        <div class="stage__render">
-          <Image
-            src={render}
-            alt="Rendered assembly of the LC 3-Axis force sensor: two plates joined by four bar load cells, with converter boards on the sides."
-            widths={[480, 689]}
-            sizes="(min-width: 900px) 652px, 100vw"
-            loading="eager"
-            fetchpriority="high"
-          />
-        </div>
-
-        <svg class="stage__leaders" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
-          {
-            callouts.map((c, i) => (
-              <polyline
-                points={`${c.at[0]},${c.at[1]} ${c.to[0]},${c.to[1]}`}
-                pathLength="1"
-                style={`--i:${i}`}
-              />
-            ))
-          }
-        </svg>
-
-        {
-          callouts.map((c, i) => (
-            <span class="stage__dot" style={`left:${pct(c.to[0], 1200)};top:${pct(c.to[1], 600)};--i:${i}`} />
-          ))
-        }
-
-        <ul class="stage__notes">
-          {
-            callouts.map((c, i) => (
-              <li
-                class:list={['note', `note--${c.side}`]}
-                style={`top:${pct(c.at[1], 600)};--i:${i}`}
-              >
-                <strong>{c.title}</strong>
-                <span>{c.note}</span>
-              </li>
-            ))
-          }
-        </ul>
+    <div class="hero__text">
+      <h1>{site.heroGreeting}</h1>
+      <p class="hero__bio">{site.heroBio}</p>
+      <div class="hero__actions">
+        <a class="btn" href={site.linkedin} target="_blank" rel="me noopener">
+          <Icon name="linkedin" /> LinkedIn
+        </a>
+        <a class="btn btn--secondary" href="/resume">
+          <Icon name="file" /> Résumé
+        </a>
       </div>
-
-      <figcaption>
-        LC 3-Axis force sensor. A three-axis force sensor for $116.55 in electronics, within 1.0–2.5% of a
-        commercial unit on a robot arm. <a class="link" href="/projects/lc-3-axis">Read how it was built</a>
-      </figcaption>
-    </figure>
+      <p class="hero__email">
+        Or email me at <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+    </div>
   </div>
 </section>
 
 <style>
   .hero {
-    padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 5vw, 3rem);
+    padding-block: clamp(2rem, 4vw, 3rem) 0;
   }
-  .hero__name {
-    font-size: var(--step-4);
-    font-stretch: 125%;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 0.95;
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(240px, 360px) minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 5.5rem);
+    align-items: center;
   }
-  .hero__intro {
-    margin-top: clamp(1.25rem, 3vw, 2rem);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1.5rem 3rem;
+  .hero__photo {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--r-media);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .hero__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: settle 1.4s var(--ease-out) both;
+  }
+  .hero__text h1 {
+    font-size: var(--text-h1);
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  .hero__bio {
+    margin-top: 1.5rem;
+    font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 34ch;
   }
   .hero__actions {
+    margin-top: 2.25rem;
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
   }
-
-  .stage {
-    margin-top: clamp(2rem, 5vw, 3.5rem);
-  }
-  .stage__canvas {
-    position: relative;
-    aspect-ratio: 1200 / 600;
-  }
-  .stage__render {
-    position: absolute;
-    left: calc(290 / 1200 * 100%);
-    top: calc(20 / 600 * 100%);
-    width: calc(652 / 1200 * 100%);
-  }
-  .stage__render :global(img) {
-    width: 100%;
-    height: auto;
-  }
-  .stage__leaders {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-  .stage__leaders polyline {
-    fill: none;
-    stroke: var(--layout-blue);
-    stroke-width: 1.25;
-    vector-effect: non-scaling-stroke;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: draw 0.7s cubic-bezier(0.5, 0, 0.2, 1) forwards;
-    animation-delay: calc(0.35s + var(--i) * 0.18s);
-  }
-  .stage__dot {
-    position: absolute;
-    width: 9px;
-    height: 9px;
-    margin: -4.5px 0 0 -4.5px;
-    border-radius: 50%;
-    background: var(--layout-blue);
-    box-shadow: 0 0 0 2.5px var(--paper);
-    opacity: 0;
-    animation: appear 0.2s forwards;
-    animation-delay: calc(0.95s + var(--i) * 0.18s);
-  }
-  .stage__notes {
-    list-style: none;
-    padding: 0;
-  }
-  .note {
-    position: absolute;
-    width: calc(250 / 1200 * 100%);
-    display: grid;
-    gap: 0.15rem;
-    font-size: var(--step--1);
-    line-height: 1.35;
-    padding-bottom: 0.4rem;
-    border-bottom: 1.25px solid var(--layout-blue);
-    opacity: 0;
-    animation: appear 0.4s forwards;
-    animation-delay: calc(0.2s + var(--i) * 0.18s);
-  }
-  .note strong {
-    font-weight: 650;
-    font-size: 0.95rem;
-  }
-  .note span {
-    color: var(--graphite);
-  }
-  .note--left {
-    left: calc(20 / 1200 * 100%);
-    text-align: right;
-    transform: translateY(-100%);
-  }
-  .note--right {
-    left: calc(960 / 1200 * 100%);
-    transform: translateY(-100%);
-  }
-
-  .stage figcaption {
+  .hero__email {
     margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--hairline);
-    color: var(--graphite);
-    max-width: 70ch;
+    font-size: var(--text-sm);
+    color: var(--muted);
   }
 
-  @keyframes draw {
-    to { stroke-dashoffset: 0; }
-  }
-  @keyframes appear {
-    to { opacity: 1; }
+  @keyframes settle {
+    from { transform: scale(1.06); }
+    to { transform: scale(1); }
   }
 
-  /* below desktop, callouts become a plain list under the render */
-  @media (max-width: 960px) {
-    .stage__canvas {
-      aspect-ratio: auto;
+  @media (max-width: 760px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr);
     }
-    .stage__render {
-      position: static;
-      width: min(100%, 560px);
-      margin-inline: auto;
+    .hero__photo {
+      aspect-ratio: 4 / 3;
     }
-    .stage__leaders,
-    .stage__dot {
-      display: none;
-    }
-    .stage__notes {
-      margin-top: 1.5rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem 1.5rem;
-    }
-    .note,
-    .note--left,
-    .note--right {
-      position: static;
-      width: auto;
-      transform: none;
-      text-align: left;
-      opacity: 1;
-      animation: none;
-      border-bottom: none;
-      border-top: 1.25px solid var(--layout-blue);
-      padding: 0.6rem 0 0;
+    .hero__photo :global(img) {
+      object-position: 50% 22%;
     }
   }
 </style>

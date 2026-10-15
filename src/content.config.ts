@@ -20,6 +20,7 @@ const projects = defineCollection({
     heroAlt: z.string(),
     cardImage: z.string().optional(),
     cardAlt: z.string().optional(),
+    cardPosition: z.string().optional(),
     order: z.number().default(99),
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
