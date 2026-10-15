@@ -46,6 +46,28 @@ const projects = (await getCollection('projects')).sort(
         <div class="about__text">
           {site.about.map((p) => <p>{p}</p>)}
         </div>
+
+        <h3 class="about__sub">Experience</h3>
+        <ul class="timeline">
+          {
+            site.experience.map((e) => (
+              <li>
+                <span class="timeline__role">{e.role}</span>
+                <span class="timeline__org">{e.org}</span>
+                <span class="timeline__dates">{e.dates}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="about__sub">Education</h3>
+        <ul class="timeline">
+          <li>
+            <span class="timeline__role">{site.education.degree}</span>
+            <span class="timeline__org">{site.education.school}</span>
+            <span class="timeline__dates">{site.education.gpa}</span>
+          </li>
+        </ul>
       </div>
       <div class="skills">
         <h3>Skills</h3>
@@ -108,6 +130,40 @@ const projects = (await getCollection('projects')).sort(
     line-height: 1.6;
     max-width: 54ch;
   }
+  .about__sub {
+    margin-top: 2.75rem;
+    font-size: var(--text-lg);
+  }
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin-top: 0.75rem;
+    max-width: 54ch;
+  }
+  .timeline li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.1rem 1.5rem;
+    padding-block: 0.9rem;
+    border-top: 1px solid #dcdfe5;
+  }
+  .timeline__role {
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .timeline__org {
+    grid-column: 1;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .timeline__dates {
+    grid-column: 2;
+    grid-row: 1;
+    color: var(--muted);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
   .skills {
     align-self: start;
     background: var(--bg);
@@ -152,6 +208,16 @@ const projects = (await getCollection('projects')).sort(
     gap: 0.75rem;
   }
 
+  @media (max-width: 520px) {
+    .timeline li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .timeline__dates {
+      grid-column: 1;
+      grid-row: auto;
+      padding-top: 0;
+    }
+  }
   @media (max-width: 420px) {
     .contact__actions {
       flex-direction: column;
